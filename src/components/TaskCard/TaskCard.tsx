@@ -4,18 +4,18 @@ interface TaskCardProps {
     title: string
     description?: string;
     priority: "low" | "medium" | "high";
-    isCompleted : boolean
+    isCompleted: boolean
     dueDate?: string
 }
 
-export function TaskCard ({title , description , priority , isCompleted , dueDate}: TaskCardProps) {
+export function TaskCard({ title, description, priority, isCompleted, dueDate }: TaskCardProps) {
     // Early return si pas de titre (sécurité)
-    if(!title) {
+    if (!title) {
         return null
     }
 
     const priorityLabels = {
-        low : "Low",
+        low: "Low",
         medium: "Medium",
         high: "High"
     };
