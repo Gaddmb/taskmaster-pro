@@ -7,5 +7,5 @@ export interface Task {
   priority: 'low' | 'medium' | 'high';
   isCompleted: boolean;
   dueDate?: string;
-  createAt:string
+  createdAt: string
 }
