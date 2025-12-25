@@ -47,7 +47,7 @@ export function TaskForm({ onAddTask }: TaskFormProps) {
                 </label>
 
                 < input
-                    type="texte"
+                    type="text"
                     id="title"
                     className="task-form__input"
                     value={title}

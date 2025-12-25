@@ -35,7 +35,7 @@ export function TaskCard({ title, description, priority, isCompleted, dueDate }:
                 )}
 
                 <span className="task-card__status">
-                    {isCompleted ? "Completede" : "O Pending"}
+                    {isCompleted ? " Completed " : " O Pending "}
                 </span>
             </div>
         </article>
