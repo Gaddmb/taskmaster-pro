@@ -1,10 +1,12 @@
 import './TaskFilters.css';
 
 interface TaskFiltersProps {
+    // valeur actuelle 
     searchQuery: string;
     filterStatus: 'all' | 'active' | 'completed';
     filterPriority: 'all' | 'low' | 'medium' | 'high';
     sortBy: 'date' | 'priority' | 'status';
+    // props de callback
     onSearchChange: (query: string) => void;
     onFilterStatusChange: (status: 'all' | 'active' | 'completed') => void;
     onFilterPriorityChange: (priority: 'all' | 'low' | 'medium' | 'high') => void;

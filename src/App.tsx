@@ -6,6 +6,7 @@ import { TaskList } from './components/TaskList';
 import type { Task } from './types';
 
 
+
 // DONNÉES DE DÉPART
 const initialTasks: Task[] = [
   {
@@ -55,11 +56,15 @@ export default function App() {
   // STATE : Données 
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
 
-  // === STATE : Filtres ===
+  // STATE : Filtres 
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'completed'>('all');
   const [filterPriority, setFilterPriority] = useState<'all' | 'low' | 'medium' | 'high'>('all');
   const [sortBy, setSortBy] = useState<'date' | 'priority' | 'status'>('date');
+
+  // State : Edit
+  // null = rien en édition | string = ID de la tâche en cours d'édition
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
 
   // ACTIONS 
   const handleAddTask = (title: string, priority: 'low' | 'medium' | 'high') => {
@@ -85,9 +90,28 @@ export default function App() {
     setTasks(prev => prev.filter(task => task.id !== taskId));
   };
 
+  const handleEditTask = (taskId: string) => {
+    setEditingTaskId(taskId);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingTaskId(null)
+  }
+
+  const handleUpdateTask = (taskId: string, title: string, priority: 'low' | 'medium' | 'high') => {
+    setTasks(prev =>
+      prev.map(task =>
+        task.id === taskId ? { ...task, title, priority } : task
+      )
+    );
+    // Ferme le formulaire après sauvegarde
+    setEditingTaskId(null);
+  };
+
   // FONCTION DE FILTRAGE ET TRI 
   const getDisplayedTasks = (): Task[] => {
-    // Accède directement aux states du composant 
+    // COPIE le tableau avant de le manipuler
+    // Comme ça, on ne MUTE PAS le state tasks original
     let result = [...tasks];
 
     // 1. Filtre par recherche (nom de la tâche)
@@ -113,12 +137,16 @@ export default function App() {
     // 4. Tri
     if (sortBy === 'date') {
       result.sort((a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-    } else if (sortBy === 'priority') {
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    }
+
+    else if (sortBy === 'priority') {
+      // plus le nombre est peit , plus c'est prioritaire !
       const priorityOrder = { high: 1, medium: 2, low: 3 };
       result.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
-    } else if (sortBy === 'status') {
+    }
+
+    else if (sortBy === 'status') {
       result.sort((a, b) => Number(a.isCompleted) - Number(b.isCompleted));
     }
 
@@ -146,10 +174,14 @@ export default function App() {
         <section className="section">
           <h2 className="section__title">Filters</h2>
           <TaskFilters
+            // Parent → Enfant : Valeur (searchQuery)
+            // VALEURS (ce qu'on affiche dans les inputs)
             searchQuery={searchQuery}
             filterStatus={filterStatus}
             filterPriority={filterPriority}
             sortBy={sortBy}
+            // Enfant → Parent : Événement (onSearchChange)
+            // SETTERS (ce qu'on appelle quand user change)
             onSearchChange={setSearchQuery}
             onFilterStatusChange={setFilterStatus}
             onFilterPriorityChange={setFilterPriority}
@@ -164,11 +196,18 @@ export default function App() {
           </h2>
           <TaskList
             tasks={displayedTasks}
+            editingTaskId={editingTaskId}
+
             onToggleComplete={handleToggleComplete}
             onDeleteTask={handleDeleteTask}
+            onEditTask={handleEditTask}
+
+            onCancelEdit={handleCancelEdit}
+            onUpdateTask={handleUpdateTask}
           />
         </section>
       </main>
     </div>
   );
 }
+
